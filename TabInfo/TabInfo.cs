@@ -37,6 +37,7 @@ namespace TabInfo
         public const string TestingInitials = "Testing";
 
         public static TabInfo instance { get; private set; }
+        public MonoBehaviourPun photonCoordinator { get; private set; }
 
         void Awake()
         {
@@ -68,19 +69,7 @@ namespace TabInfo
         }
         private void OnJoinedRoomAction()
         {
-            if (!PhotonNetwork.OfflineMode)
-            {
-                ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
-                if (customProperties.ContainsKey("Ping"))
-                {
-                    customProperties["Ping"] = PhotonNetwork.GetPing();
-                }
-                else
-                {
-                    customProperties.Add("Ping", PhotonNetwork.GetPing());
-                }
-                PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties, null, null);
-            }
+
         }
 
         private void OnLeftRoomAction()
