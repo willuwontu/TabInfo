@@ -101,6 +101,21 @@ namespace TabInfo
                 }
             }
 
+            { // Load Frame assets
+                TabInfoManager.canvas = Instantiate(TabInfo.instance.Assets.LoadAsset<GameObject>("Info Canvas"));
+                RectTransform rect = TabInfoManager.canvas.GetComponent<RectTransform>();
+                rect.localScale = Vector3.one;
+                TabInfoManager.canvas.GetComponent<Canvas>().worldCamera = Camera.current;
+                DontDestroyOnLoad(TabInfoManager.canvas);
+
+                TabInfoManager.tabFrameTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Info Container");
+                TabInfoManager.teamFrameTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Team Frame");
+                TabInfoManager.playerFrameTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Player Frame");
+                TabInfoManager.cardButtonTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Card Button");
+                TabInfoManager.statSectionTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Section");
+                TabInfoManager.statObjectTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Object");
+            }
+
             GameModeManager.AddHook(GameModeHooks.HookGameEnd, GameEnd);
             GameModeManager.AddHook(GameModeHooks.HookGameStart, GameStart);
             GameModeManager.AddHook(GameModeHooks.HookBattleStart, BattleStart);
