@@ -90,6 +90,7 @@ namespace TabInfo.Utils
             this.cardBar.playerFrame = this;
             this.cardBar.player = this.player;
             this.Button.onClick.AddListener(OnHeaderClicked);
+            this.NameText.text = this.player.data.view.Owner.NickName;
 
             foreach (var category in TabInfoManager.Categories.Values.OrderBy(c => c.priority).ThenBy(c => c.name.ToLower()))
             {

@@ -49,6 +49,8 @@ namespace TabInfo.Utils
             gunStats = new StatCategory("Gun", -2);
             _categories.Add(basicStats.name.ToLower(), basicStats);
             _categories.Add(gunStats.name.ToLower(), gunStats);
+            basicStats.RegisterStat("HP", (value) => true, (player) => string.Format("{0:F0}/{1:F0}", player.data.health, player.data.maxHealth));
+            basicStats.RegisterStat("Damage", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.damage * player.data.weaponHandler.gun.bulletDamageMultiplier * 55f));
         }
 
         internal static GameObject canvas;
@@ -58,6 +60,15 @@ namespace TabInfo.Utils
         internal static GameObject cardButtonTemplate;
         internal static GameObject statSectionTemplate;
         internal static GameObject statObjectTemplate;
+
+        internal static TabFrame tabFrame = null;
+
+        public static int RoundsToWin { get => (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["roundsToWinGame"]; }
+        public static int PointsToWin { get => (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["pointsToWinRound"]; }
+        public static int CurrentRound { get; internal set; }
+        public static int CurrentPoint { get; internal set; }
+
+        public static bool IsLockingInput { get { if (tabFrame != null) { return tabFrame.gameObject.activeSelf; } return false; } }
     }
 
     public class StatCategory

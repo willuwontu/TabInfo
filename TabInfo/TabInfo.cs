@@ -41,11 +41,6 @@ namespace TabInfo
         public static TabInfo instance { get; private set; }
         public MonoBehaviourPun photonCoordinator { get; private set; }
 
-        public int CurrentRound { get; private set; }
-        public int CurrentPoint { get; private set; }
-        public int RoundsToWin { get; private set; }
-        public int PointsToWin { get; private set; }
-
         public AssetBundle Assets { get; private set; }
 
         public List<AudioClip> click;
@@ -114,6 +109,10 @@ namespace TabInfo
                 TabInfoManager.cardButtonTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Card Button");
                 TabInfoManager.statSectionTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Section");
                 TabInfoManager.statObjectTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Object");
+
+                var tabFrameObj = Instantiate(TabInfoManager.tabFrameTemplate, TabInfoManager.canvas.transform);
+                TabInfoManager.tabFrame = tabFrameObj.AddComponent<TabFrame>();
+                tabFrameObj.SetActive(false);
             }
 
             GameModeManager.AddHook(GameModeHooks.HookGameEnd, GameEnd);
@@ -132,7 +131,7 @@ namespace TabInfo
             networkEvents.OnJoinedRoomEvent += OnJoinedRoomAction;
             networkEvents.OnLeftRoomEvent += OnLeftRoomAction;
 
-            this.ExecuteAfterSeconds(5, () => { CreateColorTester(); });
+            //this.ExecuteAfterSeconds(5, () => { CreateColorTester(); });
 
         }
         private void OnJoinedRoomAction()
@@ -164,8 +163,8 @@ namespace TabInfo
 
         IEnumerator RoundStart(IGameModeHandler gm)
         {
-            CurrentRound += 1;
-            CurrentPoint = 0;
+            TabInfoManager.CurrentRound += 1;
+            TabInfoManager.CurrentPoint = 0;
             yield break;
         }
 
@@ -176,16 +175,12 @@ namespace TabInfo
 
         IEnumerator PointStart(IGameModeHandler gm)
         {
-            CurrentPoint += 1;
-            RoundsToWin = (int)gm.Settings["roundsToWinGame"];
-            PointsToWin = (int)gm.Settings["pointsToWinRound"];
+            TabInfoManager.CurrentPoint += 1;
             yield break;
         }
 
         IEnumerator PointEnd(IGameModeHandler gm)
         {
-            RoundsToWin = (int)gm.Settings["roundsToWinGame"];
-            PointsToWin = (int)gm.Settings["pointsToWinRound"];
             yield break;
         }
 
@@ -202,8 +197,6 @@ namespace TabInfo
 
         IEnumerator PickStart(IGameModeHandler gm)
         {
-            RoundsToWin = (int)gm.Settings["roundsToWinGame"];
-            PointsToWin = (int)gm.Settings["pointsToWinRound"];
             yield break;
         }
 
@@ -218,10 +211,8 @@ namespace TabInfo
         }
         IEnumerator GameStart(IGameModeHandler gm)
         {
-            CurrentRound = 0;
-            CurrentPoint = 0;
-            RoundsToWin = (int)gm.Settings["roundsToWinGame"];
-            PointsToWin = (int)gm.Settings["pointsToWinRound"];
+            TabInfoManager.CurrentRound = 0;
+            TabInfoManager.CurrentPoint = 0;
             yield break;
         }
 
@@ -463,7 +454,7 @@ namespace TabInfo
 
                 RectTransform CreateColorBox(GameObject parent, Color textColor, string textColorType, Color color, string colorColorType)
                 {
-                    var colors = ColorManager.GetContrastingColors(textColor, color, 3f);
+                    var colors = ColorManager.GetContrastingColors(textColor, color, 3.5f);
 
                     if (ColorManager.RelativeLuminance(textColor) < ColorManager.RelativeLuminance(color))
                     {
