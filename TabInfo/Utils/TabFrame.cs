@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 namespace TabInfo.Utils
@@ -44,6 +46,49 @@ namespace TabInfo.Utils
                 }
                 return this._teamHolder;
             }
+        }
+        public CanvasGroup CanvasGroup => this.GetComponent<CanvasGroup>();
+        private List<TeamFrame> teamFrames = new List<TeamFrame>();
+        internal bool toggled;
+        private void Start()
+        {
+            foreach (var team in PlayerManager.instance.players.Select(player => player.teamID).Distinct().OrderBy(team=> team))
+            {
+                var teamFrameObj = Instantiate(TabInfoManager.teamFrameTemplate, this.TeamHolder.transform);
+                var teamFrame = teamFrameObj.AddComponent<TeamFrame>();
+                teamFrame.team = team;
+                this.teamFrames.Add(teamFrame);
+            }
+
+            this.CloseButton.onClick.AddListener(() => { this.toggled = false; this.gameObject.SetActive(false); });
+        }
+        private void Update()
+        {
+            if (teamFrames.Count() != PlayerManager.instance.players.Select(player => player.teamID).Distinct().Count())
+            {
+                var extraTeams = this.teamFrames.Select(teamFrame => teamFrame.team).Except(PlayerManager.instance.players.Select(player => player.teamID).Distinct());
+                var extraTeamFrames = this.teamFrames.Where(teamFrame => extraTeams.Contains(teamFrame.team));
+                foreach (var teamFrame in extraTeamFrames) { UnityEngine.GameObject.Destroy(teamFrame); }
+                var missingTeams = PlayerManager.instance.players.Select(player => player.teamID).Distinct().Except(this.teamFrames.Select(teamFrame => teamFrame.team));
+
+                foreach (var team in missingTeams)
+                {
+                    var teamFrameObj = Instantiate(TabInfoManager.teamFrameTemplate, this.TeamHolder.transform);
+                    var teamFrame = teamFrameObj.AddComponent<TeamFrame>();
+                    teamFrame.team = team;
+                    this.teamFrames.Add(teamFrame);
+                }
+
+                var teamOrder = PlayerManager.instance.players.Select(player => player.teamID).Distinct().OrderBy(team => team).ToArray();
+                for (int i = 0; i < teamOrder.Length; i++)
+                {
+                    this.teamFrames.Where(teamframe => teamframe.team == teamOrder[i]).First().gameObject.transform.SetSiblingIndex(i);
+                }
+            }
+
+            this.Title.text = string.Format("{0} - Round {1} - Point {2} - {3} Player", UnboundLib.GameModes.GameModeManager.CurrentHandler.Name, TabInfoManager.CurrentRound, TabInfoManager.CurrentPoint, PlayerManager.instance.players.Count());
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(this.GetComponent<RectTransform>());
         }
     }
 }

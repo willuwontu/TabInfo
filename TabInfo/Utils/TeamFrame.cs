@@ -67,6 +67,7 @@ namespace TabInfo.Utils
             }
         }
         private List<PlayerFrame> playerFrames = new List<PlayerFrame>();
+        private PlayerSkin teamSkin;
         private Color[] colors;
         private void Start()
         {
@@ -80,9 +81,9 @@ namespace TabInfo.Utils
             }
             if (playerFrames.Count() > 0)
             {
-                var colors = playerFrames[0].player.GetTeamColors();
+                teamSkin = playerFrames[0].player.GetTeamColors();
                 this.TeamName.text = UnboundLib.Utils.ExtraPlayerSkins.GetTeamColorName(playerFrames[0].player.colorID());
-                this.colors = ColorManager.GetContrastingColors(colors.winText, colors.backgroundColor, 3);
+                this.colors = ColorManager.GetContrastingColors(teamSkin.winText, teamSkin.particleEffect, 3.5f);
                 this.HeaderBG.color = this.colors[1];
                 this.TeamName.color = this.colors[0];
                 this.TeamScore.color = this.colors[0];
@@ -115,9 +116,18 @@ namespace TabInfo.Utils
             }
 
             var score = UnboundLib.GameModes.GameModeManager.CurrentHandler.GetTeamScore(this.team);
-            var roundsToWin = (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["roundsToWinGame"];
-            var pointsToWin = (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["pointsToWinRound"];
-            this.TeamScore.text = $"{score.rounds}/{roundsToWin} Rounds {score.points}/{pointsToWin} Points";
+            this.TeamScore.text = $"{score.rounds}/{TabInfoManager.RoundsToWin} Rounds {score.points}/{TabInfoManager.PointsToWin} Points";
+
+            if (playerFrames.Count() > 0 && (teamSkin != playerFrames[0].player.GetTeamColors()))
+            {
+                teamSkin = playerFrames[0].player.GetTeamColors();
+                this.TeamName.text = UnboundLib.Utils.ExtraPlayerSkins.GetTeamColorName(playerFrames[0].player.colorID());
+                this.colors = ColorManager.GetContrastingColors(teamSkin.winText, teamSkin.particleEffect, 3.5f);
+                this.HeaderBG.color = this.colors[1];
+                this.TeamName.color = this.colors[0];
+                this.TeamScore.color = this.colors[0];
+                this.Spacer.color = this.colors[0];
+            }
         }
     }
 }
