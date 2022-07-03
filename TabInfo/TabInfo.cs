@@ -55,6 +55,7 @@ namespace TabInfo
         }
         void Start()
         {
+            Unbound.RegisterClientSideMod(ModId);
             Unbound.RegisterCredits(ModName, new string[] { "willuwontu" }, new string[] { "github", "Ko-Fi" }, new string[] { "https://github.com/willuwontu/wills-wacky-cards", "https://ko-fi.com/willuwontu" });
 
             instance = this;
@@ -109,6 +110,7 @@ namespace TabInfo
                 TabInfoManager.cardButtonTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Card Button");
                 TabInfoManager.statSectionTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Section");
                 TabInfoManager.statObjectTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Object");
+                TabInfoManager.cardHolderTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Card Holder");
 
                 var tabFrameObj = Instantiate(TabInfoManager.tabFrameTemplate, TabInfoManager.canvas.transform);
                 TabInfoManager.tabFrame = tabFrameObj.AddComponent<TabFrame>();
@@ -138,7 +140,8 @@ namespace TabInfo
 
         private void OnLeftRoomAction()
         {
-
+            TabInfoManager.tabFrame.toggled = false;
+            TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
         }
 
         public static class WaitFor
@@ -208,6 +211,8 @@ namespace TabInfo
         }
         IEnumerator GameStart(IGameModeHandler gm)
         {
+            TabInfoManager.tabFrame.toggled = false;
+            TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
             TabInfoManager.CurrentRound = 0;
             TabInfoManager.CurrentPoint = 0;
             yield break;

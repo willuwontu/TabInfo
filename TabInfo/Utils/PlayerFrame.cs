@@ -88,7 +88,6 @@ namespace TabInfo.Utils
         {
             this.cardBar = this.CardBar.AddComponent<PlayerCardBar>();
             this.cardBar.playerFrame = this;
-            this.cardBar.player = this.player;
             this.Button.onClick.AddListener(OnHeaderClicked);
             this.NameText.text = this.player.data.view.Owner.NickName;
 
@@ -108,7 +107,7 @@ namespace TabInfo.Utils
             {
                 var extraCategories = this.statSections.Select(section => section.category).Except(TabInfoManager.Categories.Values).ToArray();
                 var extraSections = this.statSections.Where(section => extraCategories.Contains(section.category)).ToArray();
-                foreach (var section in extraSections) { UnityEngine.GameObject.Destroy(section.gameObject); }
+                foreach (var section in extraSections) { UnityEngine.GameObject.Destroy(section.gameObject); this.statSections.Remove(section); }
                 var missingCategories = TabInfoManager.Categories.Values.Except(this.statSections.Select(section => section.category)).ToArray();
                 foreach (var category in missingCategories)
                 {

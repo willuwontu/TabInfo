@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.UI;
+using System.Linq;
+using UnboundLib;
 
 namespace TabInfo.Utils
 {
@@ -9,6 +12,7 @@ namespace TabInfo.Utils
         public PlayerCardBar cardBar;
         public CardInfo card;
         private TextMeshProUGUI _text = null;
+        private GameObject displayedCard;
         public TextMeshProUGUI Text
         {
             get
@@ -43,12 +47,43 @@ namespace TabInfo.Utils
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-
+            if (displayedCard != null)
+            {
+                UnityEngine.GameObject.Destroy(displayedCard);
+            }
+            displayedCard = Instantiate(TabInfoManager.cardHolderTemplate, TabInfoManager.canvas.transform);
+            displayedCard.transform.position = this.gameObject.transform.position;
+            var cardObj = Instantiate(this.card.gameObject, displayedCard.transform);
+            var cardVis = cardObj.GetComponentInChildren<CardVisuals>();
+            cardVis.firstValueToSet = true;
+            cardObj.transform.localPosition = Vector3.zero;
+            Collider2D[] componentsInChildren = displayedCard.GetComponentsInChildren<Collider2D>();
+            for (int i = 0; i < componentsInChildren.Length; i++)
+            {
+                componentsInChildren[i].enabled = false;
+            }
+            cardObj.GetComponentInChildren<Canvas>().sortingLayerName = "MostFront";
+            cardObj.GetComponentInChildren<GraphicRaycaster>().enabled = false;
+            cardObj.GetComponentInChildren<SetScaleToZero>().enabled = false;
+            cardObj.GetComponentInChildren<SetScaleToZero>().transform.localScale = Vector3.one * 1.15f;
+            this.ExecuteAfterFrames(1, () => { 
+                cardObj.transform.localScale = Vector3.one * 25f;
+            });
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-
+            if (displayedCard != null)
+            {
+                UnityEngine.GameObject.Destroy(displayedCard);
+            }
+        }
+        private void OnDisable()
+        {
+            if (displayedCard != null)
+            {
+                UnityEngine.GameObject.Destroy(displayedCard);
+            }
         }
     }
 }
