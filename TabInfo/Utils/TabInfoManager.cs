@@ -60,6 +60,7 @@ namespace TabInfo.Utils
         internal static GameObject cardButtonTemplate;
         internal static GameObject statSectionTemplate;
         internal static GameObject statObjectTemplate;
+        internal static GameObject cardHolderTemplate;
 
         internal static TabFrame tabFrame = null;
 
@@ -69,6 +70,24 @@ namespace TabInfo.Utils
         public static int CurrentPoint { get; internal set; }
 
         public static bool IsLockingInput { get { if (tabFrame != null) { return tabFrame.gameObject.activeSelf; } return false; } }
+        private static List<string> hiddenGameModes = new List<string>();
+        /// <summary>
+        /// Registers a gamemode that the UI will hidden during and cannot be opened.
+        /// </summary>
+        /// <param name="gameModeID">The ID of the gamemode to register. This is the same ID used to register it with unbound.</param>
+        public static void RegisterHiddenGameMode(string gameModeID)
+        {
+            TabInfoManager.hiddenGameModes.Add(gameModeID);
+        }
+
+        public static void ToggleTabFrame()
+        {
+            if (!hiddenGameModes.Contains(UnboundLib.GameModes.GameModeManager.CurrentHandlerID))
+            {
+                TabInfoManager.tabFrame.toggled = !TabInfoManager.tabFrame.toggled;
+                TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
+            }
+        }
     }
 
     public class StatCategory

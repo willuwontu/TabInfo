@@ -96,7 +96,7 @@ namespace TabInfo.Utils
             {
                 var extraPlayers = this.playerFrames.Select(playerFrame => playerFrame.player).Except(PlayerManager.instance.GetPlayersInTeam(this.team));
                 var extraPlayerFrames = this.playerFrames.Where(playerFrame => extraPlayers.Contains(playerFrame.player));
-                foreach (var playerFrame in extraPlayerFrames) { UnityEngine.GameObject.Destroy(playerFrame.gameObject); }
+                foreach (var playerFrame in extraPlayerFrames) { UnityEngine.GameObject.Destroy(playerFrame.gameObject); this.playerFrames.Remove(playerFrame); }
                 var missingPlayers = PlayerManager.instance.GetPlayersInTeam(this.team).Except(this.playerFrames.Select(playerFrame => playerFrame.player));
 
                 foreach (var player in missingPlayers)

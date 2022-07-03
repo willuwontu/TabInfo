@@ -77,7 +77,7 @@ namespace TabInfo.Utils
             {
                 var extraStats = this.statObjects.Select(stat => stat.stat).Except(this.category.Stats.Values).ToArray();
                 var extraStatObjs = this.statObjects.Where(stat => extraStats.Contains(stat.stat)).ToArray();
-                foreach (var stat in extraStatObjs) { UnityEngine.GameObject.Destroy(stat.gameObject); }
+                foreach (var stat in extraStatObjs) { UnityEngine.GameObject.Destroy(stat.gameObject); this.statObjects.Remove(stat); }
                 var missingStats = this.category.Stats.Values.Except(this.statObjects.Select(stat => stat.stat)).ToArray();
                 foreach (var stat in missingStats)
                 {

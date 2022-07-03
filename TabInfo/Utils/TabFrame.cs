@@ -68,7 +68,7 @@ namespace TabInfo.Utils
             {
                 var extraTeams = this.teamFrames.Select(teamFrame => teamFrame.team).Except(PlayerManager.instance.players.Select(player => player.teamID).Distinct());
                 var extraTeamFrames = this.teamFrames.Where(teamFrame => extraTeams.Contains(teamFrame.team));
-                foreach (var teamFrame in extraTeamFrames) { UnityEngine.GameObject.Destroy(teamFrame); }
+                foreach (var teamFrame in extraTeamFrames) { UnityEngine.GameObject.Destroy(teamFrame); this.teamFrames.Remove(teamFrame); }
                 var missingTeams = PlayerManager.instance.players.Select(player => player.teamID).Distinct().Except(this.teamFrames.Select(teamFrame => teamFrame.team));
 
                 foreach (var team in missingTeams)

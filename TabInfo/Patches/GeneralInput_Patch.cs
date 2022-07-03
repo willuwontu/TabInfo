@@ -19,8 +19,7 @@ namespace TabInfo.Patches
                 {
                     if (___data.playerActions.GetAdditionalData().toggleTab.WasPressed)
                     {
-                        TabInfoManager.tabFrame.toggled = !TabInfoManager.tabFrame.toggled;
-                        TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
+                        TabInfoManager.ToggleTabFrame();
                     } 
                 }
             }
