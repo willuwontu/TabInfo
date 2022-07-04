@@ -86,7 +86,7 @@ namespace TabInfo.Utils
                 }
             }
 
-            this.Title.text = string.Format("{0} - Round {1} - Point {2} - {3} Player", UnboundLib.GameModes.GameModeManager.CurrentHandler.Name, TabInfoManager.CurrentRound, TabInfoManager.CurrentPoint, PlayerManager.instance.players.Count());
+            this.Title.text = string.Format("{0} - Round {1} - Point {2} - {3} Players", UnboundLib.GameModes.GameModeManager.CurrentHandler.Name, TabInfoManager.CurrentRound, TabInfoManager.CurrentPoint, PlayerManager.instance.players.Count());
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(this.GetComponent<RectTransform>());
         }

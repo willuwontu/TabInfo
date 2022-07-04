@@ -69,6 +69,14 @@ namespace TabInfo.Utils
         private List<PlayerFrame> playerFrames = new List<PlayerFrame>();
         private PlayerSkin teamSkin;
         private Color[] colors;
+
+        private bool toggled = true;
+        private void OnHeaderClicked()
+        {
+            this.toggled = !this.toggled;
+
+            this.PlayerHolder.SetActive(toggled);
+        }
         private void Start()
         {
             foreach (var player in PlayerManager.instance.GetPlayersInTeam(this.team).OrderBy(player => player.playerID))
@@ -89,6 +97,7 @@ namespace TabInfo.Utils
                 this.TeamScore.color = this.colors[0];
                 this.Spacer.color = this.colors[0];
             }
+            this.HeaderBG.GetComponent<Button>().onClick.AddListener(OnHeaderClicked);
         }
         private void Update()
         {
