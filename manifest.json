@@ -1,0 +1,13 @@
+{
+	"name":"TabInfo",
+	"author_name":"willuwontu",
+    "version_number":"0.0.0",
+	"website_url":"https://github.com/willuwontu/TabInfo",
+	"displayName":"Tab Info",
+	"description":"A UI for displaying gmae information.",
+	"dependencies": [
+	    "willis81808-UnboundLib-2.11.2",
+		"willis81808-MMHook-1.0.0",
+		"BepInEx-BepInExPack_ROUNDS-5.4.1100"
+	]
+}

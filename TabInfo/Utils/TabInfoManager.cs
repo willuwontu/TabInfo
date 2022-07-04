@@ -12,8 +12,6 @@ namespace TabInfo.Utils
         static Dictionary<string, StatCategory> _categories = new Dictionary<string, StatCategory>();
 
         public static ReadOnlyDictionary<string, StatCategory> Categories { get => new ReadOnlyDictionary<string, StatCategory>(_categories); }
-        public static readonly StatCategory basicStats;
-        public static readonly StatCategory gunStats;
 
         public static StatCategory RegisterCategory(string name, int priority)
         {
@@ -43,14 +41,17 @@ namespace TabInfo.Utils
             return result;
         }
 
+        public static readonly StatCategory basicStats;
+
         static TabInfoManager()
         {
-            basicStats = new StatCategory("Basic Stats", -4);
-            gunStats = new StatCategory("Gun", -2);
+            basicStats = new StatCategory("Basic Stats", -1);
+
             _categories.Add(basicStats.name.ToLower(), basicStats);
-            _categories.Add(gunStats.name.ToLower(), gunStats);
             basicStats.RegisterStat("HP", (value) => true, (player) => string.Format("{0:F0}/{1:F0}", player.data.health, player.data.maxHealth));
             basicStats.RegisterStat("Damage", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.damage * player.data.weaponHandler.gun.bulletDamageMultiplier * 55f));
+            basicStats.RegisterStat("Block Cooldown", (value) => true, (player) => string.Format("{0:F2}s", player.data.block.Cooldown()));
+            basicStats.RegisterStat("Reload Time", (value) => true, (player) => string.Format("{0:F2}s", (float) player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().InvokeMethod("ReloadTime")));
         }
 
         internal static GameObject canvas;
