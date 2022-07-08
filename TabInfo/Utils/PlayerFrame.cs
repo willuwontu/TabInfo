@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnboundLib;
+using TabInfo.Extensions;
 
 namespace TabInfo.Utils
 {
@@ -14,6 +15,7 @@ namespace TabInfo.Utils
         public PlayerCardBar cardBar;
         public Player player;
         private GameObject _cardBar;
+        private ActionCatcher actionCatcher;
         public GameObject CardBar
         {
             get
@@ -74,6 +76,25 @@ namespace TabInfo.Utils
                 return this._statHolder;
             }
         }
+        private TextMeshProUGUI _kda = null;
+        public TextMeshProUGUI KDA
+        {
+            get
+            {
+                if (this._kda is null)
+                {
+                    this._kda = this.transform.Find("Player Header/KDA").gameObject.GetComponent<TextMeshProUGUI>();
+                }
+                return this._kda;
+            }
+        }
+        public TextMeshProUGUI Spacer
+        {
+            get
+            {
+                return this.transform.Find("Player Header/Spacer").gameObject.GetComponent<TextMeshProUGUI>();
+            }
+        }
 
         private void OnHeaderClicked()
         {
@@ -90,6 +111,8 @@ namespace TabInfo.Utils
             this.cardBar.playerFrame = this;
             this.Button.onClick.AddListener(OnHeaderClicked);
             this.NameText.text = this.player.data.view.Owner.NickName;
+            this.Spacer.gameObject.SetActive(false);
+            this.KDA.gameObject.SetActive(false);
 
             foreach (var category in TabInfoManager.Categories.Values.OrderBy(c => c.priority).ThenBy(c => c.name.ToLower()))
             {
@@ -131,6 +154,40 @@ namespace TabInfo.Utils
                 {
                     section.gameObject.SetActive(section.category.Stats.Values.Any(stat => stat.displayCondition(player)));
                 }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            UnityEngine.GameObject.Destroy(this.actionCatcher);
+        }
+    }
+    internal class ActionCatcher : MonoBehaviour
+    {
+        public Player player;
+
+        private void Update()
+        {
+            if (this.player != null)
+            {
+                try
+                {
+                    if (this.player.data.playerActions.GetAdditionalData().toggleTab)
+                    {
+                        if (this.player.data.playerActions.GetAdditionalData().toggleTab.WasPressed)
+                        {
+                            TabInfoManager.ToggleTabFrame();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogException(e);
+                }
+            }
+            else
+            {
+                UnityEngine.GameObject.Destroy(this);
             }
         }
     }

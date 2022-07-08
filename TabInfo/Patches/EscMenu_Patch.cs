@@ -17,6 +17,7 @@ namespace ItemShops.Patches
             if (shopOpen)
             {
                 TabInfoManager.tabFrame.gameObject.SetActive(false);
+                TabInfoManager.tabFrame.toggled = false;
             }
             return !shopOpen;
         }
