@@ -13,8 +13,6 @@ using UnboundLib;
 using UnboundLib.Utils.UI;
 using UnboundLib.GameModes;
 using UnboundLib.Extensions;
-using UnboundLib.Cards;
-using UnboundLib.Utils;
 using UnboundLib.Networking;
 using HarmonyLib;
 using Photon.Pun;
@@ -23,6 +21,7 @@ using UnityEngine.UI;
 using TabInfo.Utils;
 using Jotunn.Utils;
 using Sonigon;
+using TabInfo.Extensions;
 
 namespace TabInfo
 {
