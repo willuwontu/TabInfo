@@ -1,10 +1,10 @@
 {
 	"name":"TabInfo",
 	"author_name":"willuwontu",
-    "version_number":"0.0.0",
+    "version_number":"0.0.1",
 	"website_url":"https://github.com/willuwontu/TabInfo",
 	"displayName":"Tab Info",
-	"description":"A UI for displaying gmae information.",
+	"description":"A UI for displaying game information.",
 	"dependencies": [
 	    "willis81808-UnboundLib-2.11.2",
 		"willis81808-MMHook-1.0.0",

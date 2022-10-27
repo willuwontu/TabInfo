@@ -15,8 +15,7 @@ namespace TabInfo.Patches
         [HarmonyPostfix]
         private static void CreateAction(PlayerActions __instance)
         {
-            __instance.GetAdditionalData().toggleTab = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction", BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic, null, __instance, new object[] { "Toggle TabInfo" });
-
+            __instance.GetAdditionalData().toggleTab = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction", BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic, null, __instance, new object[] { "(TabInfo) Toggle Tab" });
         }
         [HarmonyPostfix]
         [HarmonyPatch("CreateWithControllerBindings")]

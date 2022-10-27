@@ -15,7 +15,6 @@ namespace TabInfo.Utils
         public PlayerCardBar cardBar;
         public Player player;
         private GameObject _cardBar;
-        private ActionCatcher actionCatcher;
         public GameObject CardBar
         {
             get
@@ -154,40 +153,6 @@ namespace TabInfo.Utils
                 {
                     section.gameObject.SetActive(section.category.Stats.Values.Any(stat => stat.displayCondition(player)));
                 }
-            }
-        }
-
-        private void OnDestroy()
-        {
-            UnityEngine.GameObject.Destroy(this.actionCatcher);
-        }
-    }
-    internal class ActionCatcher : MonoBehaviour
-    {
-        public Player player;
-
-        private void Update()
-        {
-            if (this.player != null)
-            {
-                try
-                {
-                    if (this.player.data.playerActions.GetAdditionalData().toggleTab)
-                    {
-                        if (this.player.data.playerActions.GetAdditionalData().toggleTab.WasPressed)
-                        {
-                            TabInfoManager.ToggleTabFrame();
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    UnityEngine.Debug.LogException(e);
-                }
-            }
-            else
-            {
-                UnityEngine.GameObject.Destroy(this);
             }
         }
     }
