@@ -102,6 +102,7 @@ namespace TabInfo
                 rect.localScale = Vector3.one;
                 TabInfoManager.canvas.GetComponent<Canvas>().worldCamera = Camera.current;
                 DontDestroyOnLoad(TabInfoManager.canvas);
+                TabInfoManager.canvas.AddComponent<TabListener>();
 
                 TabInfoManager.tabFrameTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Info Container");
                 TabInfoManager.teamFrameTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Team Frame");

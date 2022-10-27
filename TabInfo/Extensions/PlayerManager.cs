@@ -17,6 +17,11 @@ namespace TabInfo.Extensions
 
         public static Player[] LocalPlayers(this PlayerManager playerManager)
         {
+            if (playerManager.players == null || playerManager.players.Count() == 0)
+            {
+                return new Player[0];
+            }
+
             return playerManager.players.Where(player => PhotonNetwork.OfflineMode || player.data.view.IsMine).ToArray();
         }
     }

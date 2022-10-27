@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnboundLib;
 using UnityEngine;
+using TabInfo.Extensions;
 
 namespace TabInfo.Utils
 {
@@ -66,8 +67,31 @@ namespace TabInfo.Utils
 
         internal static TabFrame tabFrame = null;
 
-        public static int RoundsToWin { get => (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["roundsToWinGame"]; }
-        public static int PointsToWin { get => (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["pointsToWinRound"]; }
+        public static int RoundsToWin {
+            get
+            {
+                try
+                {
+                    return (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["roundsToWinGame"];
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+        public static int PointsToWin { get
+            {
+                try
+                {
+                    return (int)UnboundLib.GameModes.GameModeManager.CurrentHandler.Settings["pointsToWinRound"];
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
         public static int CurrentRound { get; internal set; }
         public static int CurrentPoint { get; internal set; }
 
@@ -88,6 +112,29 @@ namespace TabInfo.Utils
             {
                 TabInfoManager.tabFrame.toggled = !TabInfoManager.tabFrame.toggled;
                 TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
+            }
+        }
+    }
+
+    internal class TabListener : MonoBehaviour
+    {
+        private void Update()
+        {
+            if (PlayerManager.instance)
+            {
+                if (PlayerManager.instance.players != null)
+                {
+                    if (PlayerManager.instance.players.Count > 0)
+                    {
+                        if (PlayerManager.instance.LocalPlayers().Length > 0)
+                        {
+                            if (PlayerManager.instance.LocalPlayers().Any(player => player.data.playerActions.GetAdditionalData().toggleTab.WasPressed))
+                            {
+                                TabInfoManager.ToggleTabFrame();
+                            }
+                        }
+                    }
+                }
             }
         }
     }
