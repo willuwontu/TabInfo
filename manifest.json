@@ -1,7 +1,7 @@
 {
 	"name":"TabInfo",
 	"author_name":"willuwontu",
-    "version_number":"0.0.1",
+    "version_number":"0.0.2",
 	"website_url":"https://github.com/willuwontu/TabInfo",
 	"displayName":"Tab Info",
 	"description":"A UI for displaying game information.",

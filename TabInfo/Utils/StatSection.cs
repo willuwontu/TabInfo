@@ -61,6 +61,8 @@ namespace TabInfo.Utils
         {
             this.Button.onClick.AddListener(OnHeaderClicked);
 
+            //Title.text = category.name;
+
             foreach (var stat in this.category.Stats.Values.OrderBy(stat => stat.name))
             {
                 var statObj = Instantiate(TabInfoManager.statObjectTemplate, this.StatHolder.transform);
@@ -73,6 +75,8 @@ namespace TabInfo.Utils
 
         public void Update()
         {
+            Title.text = category.name;
+
             if (this.statObjects.Count() != this.category.Stats.Values.Count())
             {
                 var extraStats = this.statObjects.Select(stat => stat.stat).Except(this.category.Stats.Values).ToArray();
