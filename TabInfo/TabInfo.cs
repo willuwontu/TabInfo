@@ -33,7 +33,7 @@ namespace TabInfo
     {
         private const string ModId = "com.willuwontu.rounds.tabinfo";
         private const string ModName = "Tab Info";
-        public const string Version = "0.0.0"; // What version are we on (major.minor.patch)?
+        public const string Version = "0.0.2"; // What version are we on (major.minor.patch)?
 
         public const string ModInitials = "TI";
 
@@ -112,9 +112,7 @@ namespace TabInfo
                 TabInfoManager.statObjectTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Stat Object");
                 TabInfoManager.cardHolderTemplate = TabInfo.instance.Assets.LoadAsset<GameObject>("Card Holder");
 
-                var tabFrameObj = Instantiate(TabInfoManager.tabFrameTemplate, TabInfoManager.canvas.transform);
-                TabInfoManager.tabFrame = tabFrameObj.AddComponent<TabFrame>();
-                tabFrameObj.SetActive(false);
+                TabFrame _ = TabInfoManager.TabFrame;
             }
 
             GameModeManager.AddHook(GameModeHooks.HookGameEnd, GameEnd);
@@ -140,8 +138,9 @@ namespace TabInfo
 
         private void OnLeftRoomAction()
         {
-            TabInfoManager.tabFrame.toggled = false;
-            TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
+            TabFrame _ = TabInfoManager.TabFrame;
+            TabInfoManager.TabFrame.toggled = false;
+            TabInfoManager.TabFrame.gameObject.SetActive(TabInfoManager.TabFrame.toggled);
         }
 
         public static class WaitFor
@@ -211,8 +210,9 @@ namespace TabInfo
         }
         IEnumerator GameStart(IGameModeHandler gm)
         {
-            TabInfoManager.tabFrame.toggled = false;
-            TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
+            TabFrame _ = TabInfoManager.TabFrame;
+            TabInfoManager.TabFrame.toggled = false;
+            TabInfoManager.TabFrame.gameObject.SetActive(TabInfoManager.TabFrame.toggled);
             TabInfoManager.CurrentRound = 0;
             TabInfoManager.CurrentPoint = 0;
             yield break;

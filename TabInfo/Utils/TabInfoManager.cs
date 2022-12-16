@@ -54,6 +54,7 @@ namespace TabInfo.Utils
             basicStats.RegisterStat("Block Cooldown", (value) => true, (player) => string.Format("{0:F2}s", player.data.block.Cooldown()));
             basicStats.RegisterStat("Reload Time", (value) => true, (player) => string.Format("{0:F2}s", (float) player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().InvokeMethod("ReloadTime")));
             basicStats.RegisterStat("Ammo", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().maxAmmo));
+            basicStats.RegisterStat("Movespeed", (value) => true, (player) => string.Format("{0:F2}", player.data.stats.movementSpeed));
         }
 
         internal static GameObject canvas;
@@ -67,6 +68,20 @@ namespace TabInfo.Utils
 
         internal static TabFrame tabFrame = null;
 
+        internal static TabFrame TabFrame
+        {
+            get
+            {
+                if (tabFrame == null)
+                {
+                    var tabFrameObj = GameObject.Instantiate(TabInfoManager.tabFrameTemplate, TabInfoManager.canvas.transform);
+                    TabInfoManager.tabFrame = tabFrameObj.AddComponent<TabFrame>();
+                    tabFrameObj.SetActive(false);
+                }
+
+                return tabFrame;
+            }
+        }
         public static int RoundsToWin {
             get
             {
@@ -95,7 +110,7 @@ namespace TabInfo.Utils
         public static int CurrentRound { get; internal set; }
         public static int CurrentPoint { get; internal set; }
 
-        public static bool IsLockingInput { get { if (tabFrame != null) { return tabFrame.gameObject.activeSelf; } return false; } }
+        public static bool IsLockingInput { get { if (TabFrame != null) { return TabFrame.gameObject.activeSelf; } return false; } }
         private static List<string> hiddenGameModes = new List<string>();
         /// <summary>
         /// Registers a gamemode that the UI will hidden during and cannot be opened.
@@ -110,8 +125,14 @@ namespace TabInfo.Utils
         {
             if (!hiddenGameModes.Contains(UnboundLib.GameModes.GameModeManager.CurrentHandlerID))
             {
-                TabInfoManager.tabFrame.toggled = !TabInfoManager.tabFrame.toggled;
-                TabInfoManager.tabFrame.gameObject.SetActive(TabInfoManager.tabFrame.toggled);
+                TabFrame _ = TabFrame;
+                TabInfoManager.TabFrame.toggled = !TabInfoManager.TabFrame.toggled;
+                TabInfoManager.TabFrame.gameObject.SetActive(TabInfoManager.TabFrame.toggled);
+
+                if (!TabInfoManager.TabFrame.toggled)
+                {
+                    UnityEngine.GameObject.Destroy(TabInfoManager.TabFrame.gameObject);
+                }
             }
         }
     }

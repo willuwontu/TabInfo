@@ -16,8 +16,9 @@ namespace ItemShops.Patches
             var shopOpen = TabInfoManager.IsLockingInput;
             if (shopOpen)
             {
-                TabInfoManager.tabFrame.gameObject.SetActive(false);
-                TabInfoManager.tabFrame.toggled = false;
+                TabFrame _ = TabInfoManager.TabFrame;
+                TabInfoManager.TabFrame.gameObject.SetActive(false);
+                TabInfoManager.TabFrame.toggled = false;
             }
             return !shopOpen;
         }
