@@ -22,6 +22,9 @@ using TabInfo.Utils;
 using Jotunn.Utils;
 using Sonigon;
 using TabInfo.Extensions;
+using UnityEngine.Events;
+using UnboundLib.Utils;
+using System.Numerics;
 
 namespace TabInfo
 {
@@ -33,7 +36,7 @@ namespace TabInfo
     {
         private const string ModId = "com.willuwontu.rounds.tabinfo";
         private const string ModName = "Tab Info";
-        public const string Version = "0.0.2"; // What version are we on (major.minor.patch)?
+        public const string Version = "0.1.0"; // What version are we on (major.minor.patch)?
 
         public const string ModInitials = "TI";
 
@@ -46,16 +49,118 @@ namespace TabInfo
         public List<AudioClip> hover;
         public List<SoundEvent> clickSounds = new List<SoundEvent>();
         public List<SoundEvent> hoverSounds = new List<SoundEvent>();
+        private bool ready = false;
+
+        private static void CycleArt()
+        {//If You Wish To Add Presets You Will need this to have them update on click
+            ArtHandler.instance.NextArt();
+            ArtHandler.instance.NextArt();
+        }
+
+        internal static string ConfigKey(string name)
+        {
+            return $"{ModId}_{name.ToLower()}";
+        }
+
+        internal static bool GetBool(StatCategory category, bool defaultValue = true)
+        {
+            return PlayerPrefs.GetInt(ConfigKey(category.name), category.toggle ? 1 : 0) == 1;
+        }
+
+        internal static void SetBool(StatCategory category)
+        {
+            PlayerPrefs.SetInt(ConfigKey(category.name), category.toggle ? 1 : 0);
+        }
+
+        internal static bool GetBool(Stat stat, bool defaultValue = true)
+        {
+            return PlayerPrefs.GetInt(ConfigKey($"{stat.category.name} {stat.name}"), stat.toggle ? 1 : 0) == 1;
+        }
+
+        internal static void SetBool(Stat stat)
+        {
+            PlayerPrefs.SetInt(ConfigKey($"{stat.category.name} {stat.name}"), stat.toggle ? 1 : 0);
+        }
+
+        private IEnumerator SetupGUI(GameObject menu)
+        {
+            yield return new WaitUntil(() => ready);
+            yield return new WaitForSecondsRealtime(0.1f);
+            NewGUI(menu);
+            yield break;
+        }
+
+        private void NewGUI(GameObject menu)
+        {
+            MenuHandler.CreateText(ModName, menu, out _, 90, false, null, null, null, null);
+            MenuHandler.CreateText("Categorys", menu, out _, 75, false, null, null, null, null);
+            MenuHandler.CreateText(" ", menu, out _, 60, false, null, null, null, null);
+            foreach (StatCategory category in TabInfoManager.Categories.Values)
+            {
+                ModGUI(MenuHandler.CreateMenu(category.name, () => { }, menu, 60, true, true, menu.transform.parent.gameObject), category);
+            }
+        }
+
+        private void ModGUI(GameObject menu, StatCategory category)
+        {
+            void ChangeCategoryToggleValue(bool value)
+            {
+                category.toggle = value;
+                SetBool(category);
+                CycleArt();
+            }
+            MenuHandler.CreateText(category.name.ToUpper(), menu, out _, 90, false, null, null, null, null);
+            MenuHandler.CreateText(" ", menu, out _, 30, false, null, null, null, null);
+
+            MenuHandler.CreateText("Toggle Category", menu, out _, 60, false, null, null, null, null);
+            MenuHandler.CreateText(" ", menu, out _, 30, false, null, null, null, null);
+
+            MenuHandler.CreateToggle(category.toggle, $"{category.name}", menu, ChangeCategoryToggleValue, 60);
+            MenuHandler.CreateText(" ", menu, out _, 30, false, null, null, null, null);
+
+            MenuHandler.CreateText("Toggle Stats ", menu, out _, 60, false, null, null, null, null);
+            MenuHandler.CreateText(" ", menu, out _, 30, false, null, null, null, null);
+            foreach (Stat stat in category.Stats.Values)
+            {
+                ModGUI(menu, stat);
+            }
+        }
+        private void ModGUI(GameObject menu, Stat stat)
+        {
+            MenuHandler.CreateToggle(stat.toggle, $"{stat.category.name} {stat.name}", menu, ChangeStatToggleValue, 60);
+            void ChangeStatToggleValue(bool value)
+            {
+                stat.toggle = value;
+                SetBool(stat);
+                CycleArt();
+            }
+        }
 
         void Awake()
         {
             var harmony = new Harmony(ModId);
             harmony.PatchAll();
         }
+
         void Start()
         {
             Unbound.RegisterClientSideMod(ModId);
             Unbound.RegisterCredits(ModName, new string[] { "willuwontu" }, new string[] { "github", "Ko-Fi" }, new string[] { "https://github.com/willuwontu/wills-wacky-cards", "https://ko-fi.com/willuwontu" });
+            Unbound.RegisterMenu(ModName, delegate () { }, menu => Unbound.Instance.StartCoroutine(SetupGUI(menu)), null, false);
+            Unbound.Instance.ExecuteAfterFrames(60, () =>
+            {
+                foreach (StatCategory category in TabInfoManager.Categories.Values)
+                {//Set And Get Category Toggles
+                    category.toggle = GetBool(category);
+                    SetBool(category);
+                    foreach (Stat stat in category.Stats.Values)
+                    {//Set And Get Stat Toggles
+                        stat.toggle = GetBool(stat);
+                        SetBool(stat);
+                    }
+                }
+                ready = true;
+            });
 
             instance = this;
 
