@@ -37,7 +37,7 @@ namespace TabInfo.Utils
         private void Update()
         {
             this.StatName.text = this.stat.name + ":";
-            this.StatValue.text = this.stat.displayValue(this.section.playerFrame.player);
+            this.StatValue.text = this.stat.DisplayValue(this.section.playerFrame.player);
         }
     }
 }

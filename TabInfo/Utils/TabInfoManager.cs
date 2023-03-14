@@ -5,7 +5,6 @@ using System.Linq;
 using UnboundLib;
 using UnityEngine;
 using TabInfo.Extensions;
-using System.Numerics;
 
 namespace TabInfo.Utils
 {
@@ -15,22 +14,6 @@ namespace TabInfo.Utils
 
         public static ReadOnlyDictionary<string, StatCategory> Categories { get => new ReadOnlyDictionary<string, StatCategory>(_categories); }
 
-        public static StatCategory RegisterCategory(string name, int priority, bool toggle)
-        {
-            if (_categories.Keys.Contains(name.ToLower()))
-            {
-                throw new ArgumentException("Category name must be unique.");
-            }
-
-            if (priority < 0)
-            {
-                throw new ArgumentException("Category priority cannot be less than 0.");
-            }
-
-            StatCategory result = new StatCategory(name, priority, toggle);
-            _categories.Add(name.ToLower(), result);
-            return result;
-        }
         public static StatCategory RegisterCategory(string name, int priority)
         {
             if (_categories.Keys.Contains(name.ToLower()))
@@ -43,7 +26,7 @@ namespace TabInfo.Utils
                 throw new ArgumentException("Category priority cannot be less than 0.");
             }
 
-            StatCategory result = new StatCategory(name, priority, true);
+            StatCategory result = new StatCategory(name, priority);
             _categories.Add(name.ToLower(), result);
             return result;
         }
@@ -63,7 +46,7 @@ namespace TabInfo.Utils
 
         static TabInfoManager()
         {
-            basicStats = new StatCategory("Basic Stats", -1, true);
+            basicStats = new StatCategory("Basic Stats", -1);
 
             _categories.Add(basicStats.name.ToLower(), basicStats);
             basicStats.RegisterStat("HP", (value) => true, (player) => string.Format("{0:F0}/{1:F0}", player.data.health, player.data.maxHealth));
@@ -184,8 +167,6 @@ namespace TabInfo.Utils
     {
         public readonly string name;
         public readonly int priority;
-        public bool toggle;
-
 
         private Dictionary<string, Stat> _stats = new Dictionary<string, Stat>();
 
@@ -207,30 +188,76 @@ namespace TabInfo.Utils
             return result;
         }
 
-        internal StatCategory(string name, int priority, bool toggle)
+        internal StatCategory(string name, int priority)
         {
             this.name = name;
             this.priority = priority;
-            this.toggle = toggle;
+        }
+
+        internal bool DisplayCondition(Player player)
+        {
+            bool flag = TabInfo.GetBool(this);
+
+            if (flag)
+            {
+                flag = flag && this.Stats.Values.Any(stat => stat.DisplayCondition(player));
+            }
+
+            return flag;
         }
     }
 
     public class Stat
     {
         public readonly string name;
-        public bool toggle;
 
         internal StatCategory category;
-        internal Func<Player, string> displayValue;
-        internal Func<Player, bool> displayCondition;
+        private Func<Player, string> displayValue;
+        private Func<Player, bool> displayCondition;
 
-        internal Stat(string name, StatCategory category, Func<Player, bool> condition, Func<Player, string> value, bool toggle = true)
+        internal Stat(string name, StatCategory category, Func<Player, bool> condition, Func<Player, string> value)
         {
             this.name = name;
             this.category = category;
             this.displayCondition = condition;
             this.displayValue = value;
-            this.toggle = toggle;
+        }
+
+        internal bool DisplayCondition(Player player) 
+        {
+            bool flag = TabInfo.GetBool(this);
+
+            if (flag)
+            {
+                try
+                {
+                    flag = flag && this.displayCondition(player);
+                }
+                catch (Exception e) 
+                {
+                    UnityEngine.Debug.LogError($"[Tab Info] Error thrown when fetching the display condition for Stat '{this.name}' in Category '{this.category.name}', see log below for details:");
+                    UnityEngine.Debug.LogException(e);
+                }
+            }
+
+            return flag;
+        }
+
+        internal string DisplayValue(Player player)
+        { 
+            string value = "";
+
+            try
+            {
+                value = this.displayValue(player);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogError($"[Tab Info] Error thrown when fetching the display condition for Stat '{this.name}' in Category '{this.category.name}', see log below for details:");
+                UnityEngine.Debug.LogException(e);
+            }
+
+            return value;
         }
     }
 }
