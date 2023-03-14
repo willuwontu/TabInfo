@@ -149,9 +149,9 @@ namespace TabInfo.Utils
 
             foreach (var section in this.statSections)
             {
-                if (section.gameObject.activeSelf != section.category.Stats.Values.Any(stat => stat.displayCondition(player)))
+                if (section.gameObject.activeSelf != section.category.DisplayCondition(player))
                 {
-                    section.gameObject.SetActive(section.category.Stats.Values.Any(stat => stat.displayCondition(player)));
+                    section.gameObject.SetActive(section.category.DisplayCondition(player));
                 }
             }
         }

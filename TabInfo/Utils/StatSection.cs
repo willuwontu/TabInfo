@@ -101,9 +101,9 @@ namespace TabInfo.Utils
 
             foreach (var statObj in statObjects)
             {
-                if (statObj.gameObject.activeSelf != statObj.stat.displayCondition(this.playerFrame.player))
+                if (statObj.gameObject.activeSelf != (statObj.stat.DisplayCondition(this.playerFrame.player)))
                 {
-                    statObj.gameObject.SetActive(statObj.stat.displayCondition(this.playerFrame.player));
+                    statObj.gameObject.SetActive(statObj.stat.DisplayCondition(this.playerFrame.player));
                 }
             }
         }
