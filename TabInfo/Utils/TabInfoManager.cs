@@ -10,7 +10,7 @@ namespace TabInfo.Utils
 {
     public static class TabInfoManager
     {
-        static Dictionary<string, StatCategory> _categories = new Dictionary<string, StatCategory>();
+        private static Dictionary<string, StatCategory> _categories = new Dictionary<string, StatCategory>();
 
         public static ReadOnlyDictionary<string, StatCategory> Categories { get => new ReadOnlyDictionary<string, StatCategory>(_categories); }
 
@@ -52,7 +52,7 @@ namespace TabInfo.Utils
             basicStats.RegisterStat("HP", (value) => true, (player) => string.Format("{0:F0}/{1:F0}", player.data.health, player.data.maxHealth));
             basicStats.RegisterStat("Damage", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.damage * player.data.weaponHandler.gun.bulletDamageMultiplier * 55f));
             basicStats.RegisterStat("Block Cooldown", (value) => true, (player) => string.Format("{0:F2}s", player.data.block.Cooldown()));
-            basicStats.RegisterStat("Reload Time", (value) => true, (player) => string.Format("{0:F2}s", (float) player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().InvokeMethod("ReloadTime")));
+            basicStats.RegisterStat("Reload Time", (value) => true, (player) => string.Format("{0:F2}s", (float)player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().InvokeMethod("ReloadTime")));
             basicStats.RegisterStat("Ammo", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().maxAmmo));
             basicStats.RegisterStat("Movespeed", (value) => true, (player) => string.Format("{0:F2}", player.data.stats.movementSpeed));
         }
@@ -82,7 +82,8 @@ namespace TabInfo.Utils
                 return tabFrame;
             }
         }
-        public static int RoundsToWin {
+        public static int RoundsToWin
+        {
             get
             {
                 try
@@ -95,7 +96,9 @@ namespace TabInfo.Utils
                 }
             }
         }
-        public static int PointsToWin { get
+        public static int PointsToWin
+        {
+            get
             {
                 try
                 {
@@ -190,15 +193,27 @@ namespace TabInfo.Utils
             this.name = name;
             this.priority = priority;
         }
+
+        internal bool DisplayCondition(Player player)
+        {
+            bool flag = TabInfo.GetBool(this);
+
+            if (flag)
+            {
+                flag = flag && this.Stats.Values.Any(stat => stat.DisplayCondition(player));
+            }
+
+            return flag;
+        }
     }
-    
+
     public class Stat
     {
         public readonly string name;
 
         internal StatCategory category;
-        internal Func<Player, string> displayValue;
-        internal Func<Player, bool> displayCondition;
+        private Func<Player, string> displayValue;
+        private Func<Player, bool> displayCondition;
 
         internal Stat(string name, StatCategory category, Func<Player, bool> condition, Func<Player, string> value)
         {
@@ -206,6 +221,43 @@ namespace TabInfo.Utils
             this.category = category;
             this.displayCondition = condition;
             this.displayValue = value;
+        }
+
+        internal bool DisplayCondition(Player player) 
+        {
+            bool flag = TabInfo.GetBool(this);
+
+            if (flag)
+            {
+                try
+                {
+                    flag = flag && this.displayCondition(player);
+                }
+                catch (Exception e) 
+                {
+                    UnityEngine.Debug.LogError($"[Tab Info] Error thrown when fetching the display condition for Stat '{this.name}' in Category '{this.category.name}', see log below for details:");
+                    UnityEngine.Debug.LogException(e);
+                }
+            }
+
+            return flag;
+        }
+
+        internal string DisplayValue(Player player)
+        { 
+            string value = "";
+
+            try
+            {
+                value = this.displayValue(player);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogError($"[Tab Info] Error thrown when fetching the display condition for Stat '{this.name}' in Category '{this.category.name}', see log below for details:");
+                UnityEngine.Debug.LogException(e);
+            }
+
+            return value;
         }
     }
 }
