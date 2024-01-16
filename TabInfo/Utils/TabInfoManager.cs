@@ -140,25 +140,34 @@ namespace TabInfo.Utils
         }
     }
 
+    internal static class PlayerExtension
+    {
+        public static PlayerActions GetPlayerActions(this Player player)
+        {
+            return player.data.playerActions;
+        }
+        public static bool PlayerHasActions(this Player player)
+        {
+            return player.data.playerActions != null;
+        }
+    }
     internal class TabListener : MonoBehaviour
     {
         private void Update()
         {
-            if (PlayerManager.instance)
+            if (PlayerManager.instance?.players == null || PlayerManager.instance.players.Count <= 0)
             {
-                if (PlayerManager.instance.players != null)
-                {
-                    if (PlayerManager.instance.players.Count > 0)
-                    {
-                        if (PlayerManager.instance.LocalPlayers().Length > 0)
-                        {
-                            if (PlayerManager.instance.LocalPlayers().Any(player => player.data.playerActions.GetAdditionalData().toggleTab.WasPressed))
-                            {
-                                TabInfoManager.ToggleTabFrame();
-                            }
-                        }
-                    }
-                }
+                return;
+            }
+            Player[] players = PlayerManager.instance.LocalPlayers();
+            if (players.Length == 0)
+            {
+                return;
+            }
+            if (players.Any(p => p.PlayerHasActions()
+            && p.GetPlayerActions().GetAdditionalData().toggleTab.WasPressed))
+            {
+                TabInfoManager.ToggleTabFrame();
             }
         }
     }
