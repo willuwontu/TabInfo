@@ -32,12 +32,11 @@ namespace TabInfo
     {
         private const string ModId = "com.willuwontu.rounds.tabinfo";
         private const string ModName = "Tab Info";
-        public const string Version = "0.0.3"; // What version are we on (major.minor.patch)?
+        public const string Version = "0.0.4"; // What version are we on (major.minor.patch)?
 
         public const string ModInitials = "TI";
 
         public static TabInfo instance { get; private set; }
-        public MonoBehaviourPun photonCoordinator { get; private set; }
 
         public AssetBundle Assets { get; private set; }
 
@@ -60,7 +59,7 @@ namespace TabInfo
 
         internal static bool GetBool(StatCategory category, bool defaultValue = true)
         {
-            return PlayerPrefs.GetInt(ConfigKey(category.name), defaultValue ? 1 : 0) == 1;
+            return PlayerPrefs.GetInt(ConfigKey(category.name), defaultValue ? 1 :0) == 1;
         }
 
         internal static void SetBool(StatCategory category, bool value)

@@ -144,20 +144,11 @@ namespace TabInfo.Utils
     {
         private void Update()
         {
-            if (PlayerManager.instance)
+            if (PlayerManager.instance && PlayerManager.instance.players != null && PlayerManager.instance.players.Count > 0 && PlayerManager.instance.LocalPlayers().Length > 0)
             {
-                if (PlayerManager.instance.players != null)
+                if (PlayerManager.instance.LocalPlayers().Any(player => player.data.playerActions != null && player.data.playerActions.GetAdditionalData().toggleTab.WasPressed))
                 {
-                    if (PlayerManager.instance.players.Count > 0)
-                    {
-                        if (PlayerManager.instance.LocalPlayers().Length > 0)
-                        {
-                            if (PlayerManager.instance.LocalPlayers().Any(player => player.data.playerActions.GetAdditionalData().toggleTab.WasPressed))
-                            {
-                                TabInfoManager.ToggleTabFrame();
-                            }
-                        }
-                    }
+                    TabInfoManager.ToggleTabFrame();
                 }
             }
         }
@@ -200,7 +191,7 @@ namespace TabInfo.Utils
 
             if (flag)
             {
-                flag = flag && this.Stats.Values.Any(stat => stat.DisplayCondition(player));
+                flag = this.Stats.Values.Any(stat => stat.DisplayCondition(player));
             }
 
             return flag;
@@ -231,7 +222,7 @@ namespace TabInfo.Utils
             {
                 try
                 {
-                    flag = flag && this.displayCondition(player);
+                    flag = this.displayCondition(player);
                 }
                 catch (Exception e) 
                 {
@@ -253,7 +244,7 @@ namespace TabInfo.Utils
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"[Tab Info] Error thrown when fetching the display condition for Stat '{this.name}' in Category '{this.category.name}', see log below for details:");
+                UnityEngine.Debug.LogError($"[Tab Info] Error thrown when fetching the display value for Stat '{this.name}' in Category '{this.category.name}', see log below for details:");
                 UnityEngine.Debug.LogException(e);
             }
 
