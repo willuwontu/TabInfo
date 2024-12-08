@@ -32,7 +32,7 @@ namespace TabInfo
     {
         private const string ModId = "com.willuwontu.rounds.tabinfo";
         private const string ModName = "Tab Info";
-        public const string Version = "0.0.4"; // What version are we on (major.minor.patch)?
+        public const string Version = "0.0.5"; // What version are we on (major.minor.patch)?
 
         public const string ModInitials = "TI";
 
