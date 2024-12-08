@@ -50,7 +50,8 @@ namespace TabInfo.Utils
 
             _categories.Add(basicStats.name.ToLower(), basicStats);
             basicStats.RegisterStat("HP", (value) => true, (player) => string.Format("{0:F0}/{1:F0}", player.data.health, player.data.maxHealth));
-            basicStats.RegisterStat("Damage", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.damage * player.data.weaponHandler.gun.bulletDamageMultiplier * 55f));
+            basicStats.RegisterStat("Damage", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.damage * player.data.weaponHandler.gun.bulletDamageMultiplier *
+                player.data.weaponHandler.gun.projectiles[0].objectToSpawn.GetComponent<ProjectileHit>().damage));
             basicStats.RegisterStat("Block Cooldown", (value) => true, (player) => string.Format("{0:F2}s", player.data.block.Cooldown()));
             basicStats.RegisterStat("Reload Time", (value) => true, (player) => string.Format("{0:F2}s", (float)player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().InvokeMethod("ReloadTime")));
             basicStats.RegisterStat("Ammo", (value) => true, (player) => string.Format("{0:F0}", player.data.weaponHandler.gun.GetComponentInChildren<GunAmmo>().maxAmmo));
