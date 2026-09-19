@@ -21,8 +21,7 @@ namespace TabInfo.Patches
         [HarmonyPatch("CreateWithControllerBindings")]
         private static void SetControllerBinding(ref PlayerActions __result)
         {
-            __result.GetAdditionalData().toggleTab.AddDefaultBinding(InputControlType.Start);
-            __result.GetAdditionalData().toggleTab.AddBinding(new DeviceBindingSource(InputControlType.Menu));
+            __result.GetAdditionalData().toggleTab.AddDefaultBinding(InputControlType.Select);
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(PlayerActions), "CreateWithKeyboardBindings")]
